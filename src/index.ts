@@ -1,4 +1,4 @@
-import { Client, Events, GatewayIntentBits, Partials } from "discord.js";
+import { ActivityType, Client, Events, GatewayIntentBits, Partials } from "discord.js";
 import { config } from "./config.ts";
 import { registerDeletedMessageAudit } from "./features/deleted-message-audit.ts";
 import { registerMemberNotifications } from "./features/member-notifications.ts";
@@ -6,6 +6,10 @@ import { registerGithubReferences } from "./features/github-references.ts";
 import { createGhostPingReporter } from "./features/ghost-ping.ts";
 
 const client = new Client({
+  presence: {
+    status: "online",
+    activities: [{ name: "12pit", type: ActivityType.Playing }],
+  },
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMembers,
