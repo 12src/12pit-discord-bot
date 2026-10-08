@@ -1,10 +1,8 @@
 import {
   ContainerBuilder,
   FileBuilder,
-  SectionBuilder,
   SeparatorBuilder,
   TextDisplayBuilder,
-  ThumbnailBuilder,
 } from "discord.js";
 
 type ReportCardOptions = {
@@ -12,17 +10,15 @@ type ReportCardOptions = {
   color: number;
   authorLabel: string;
   author: string;
-  avatarUrl?: string;
   content: string;
   details?: string;
   attachmentName?: string;
 };
 
 export function createReportCards(options: ReportCardOptions) {
-  const title = `# ${options.title}`;
-  const author = `**${options.authorLabel}**\n${options.author}`;
+  const header = `### ${options.title}\n-# ${options.authorLabel}: ${options.author}`;
   const content = options.content || "No text available.";
-  const contentLimit = 4_000 - title.length - author.length - (options.details?.length ?? 0);
+  const contentLimit = 4_000 - header.length - (options.details?.length ?? 0);
   const cards: ContainerBuilder[] = [];
 
   for (let start = 0; start < content.length;) {
@@ -37,16 +33,8 @@ export function createReportCards(options: ReportCardOptions) {
 
     const card = new ContainerBuilder()
       .setAccentColor(options.color)
-      .addTextDisplayComponents(new TextDisplayBuilder().setContent(title));
-    const authorText = new TextDisplayBuilder().setContent(author);
-    if (options.avatarUrl) {
-      card.addSectionComponents(new SectionBuilder()
-        .addTextDisplayComponents(authorText)
-        .setThumbnailAccessory(new ThumbnailBuilder().setURL(options.avatarUrl)));
-    } else {
-      card.addTextDisplayComponents(authorText);
-    }
-    card.addSeparatorComponents(new SeparatorBuilder())
+      .addTextDisplayComponents(new TextDisplayBuilder().setContent(header))
+      .addSeparatorComponents(new SeparatorBuilder().setDivider(false))
       .addTextDisplayComponents(new TextDisplayBuilder().setContent(content.slice(start, end)));
     if (options.details) {
       card.addSeparatorComponents(new SeparatorBuilder())

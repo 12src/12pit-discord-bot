@@ -20,7 +20,6 @@ export function createGhostPingReporter(client: Client<true>) {
       color: config.ghostPing.color,
       authorLabel: "Author",
       author: userMention(deleted.authorId),
-      avatarUrl: deleted.authorAvatarUrl,
       content: deleted.content,
     });
     for (const card of cards) {

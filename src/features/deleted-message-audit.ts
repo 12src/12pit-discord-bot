@@ -27,7 +27,6 @@ type CachedMessage = {
   channelId: string;
   authorId?: string;
   authorName?: string;
-  authorAvatarUrl?: string;
   authorIsBot: boolean;
   content: string;
   hasPing: boolean;
@@ -89,7 +88,6 @@ function rememberMessage(
     channelId: message.channelId,
     authorId: author?.id ?? previous?.authorId,
     authorName: author?.tag ?? previous?.authorName,
-    authorAvatarUrl: author?.displayAvatarURL() ?? previous?.authorAvatarUrl,
     authorIsBot: author?.bot ?? previous?.authorIsBot ?? false,
     content,
     hasPing: mergePartial && message.partial ? previous?.hasPing ?? false : hasPing(message),
@@ -122,7 +120,6 @@ function getDeletedMessage(
     channelId: message.channelId,
     authorId: author?.id ?? cached?.authorId,
     authorName: author?.tag ?? cached?.authorName,
-    authorAvatarUrl: author?.displayAvatarURL() ?? cached?.authorAvatarUrl,
     authorIsBot: author?.bot ?? cached?.authorIsBot ?? false,
     content: message.content ?? cached?.content ?? "",
     hasPing: message.partial ? cached?.hasPing ?? false : hasPing(message),
@@ -305,11 +302,10 @@ export async function registerDeletedMessageAudit(client: Client<true>, onDeleti
       color: config.deletedMessageAudit.color,
       authorLabel: "Author",
       author: deleted.authorId ? userMention(deleted.authorId) : "Unknown",
-      avatarUrl: deleted.authorAvatarUrl,
       content: deleted.content,
       details: [
-        `**Channel** ${channelMention(deleted.channelId)}`,
-        `**Probably deleted by** ${userMention(executor.id)}`,
+        `-# Channel: ${channelMention(deleted.channelId)}`,
+        `-# Probably deleted by: ${userMention(executor.id)}`,
         `-# <t:${Math.floor(deleted.deletedAt / 1_000)}:f>`,
       ].join("\n"),
     });
@@ -337,11 +333,10 @@ export async function registerDeletedMessageAudit(client: Client<true>, onDeleti
       color: config.deletedMessageAudit.color,
       authorLabel: "Probably deleted by",
       author: userMention(executor.id),
-      avatarUrl: executor.displayAvatarURL(),
       content: "Deleted message contents are attached.",
       details: [
-        `**Messages** ${batch.messages.length}`,
-        `**Channels** ${channelText}`,
+        `-# Messages: ${batch.messages.length}`,
+        `-# Channels: ${channelText}`,
         `-# <t:${Math.floor((batch.messages[0]?.deletedAt ?? Date.now()) / 1_000)}:f>`,
       ].join("\n"),
       attachmentName: "deleted-messages.txt",
